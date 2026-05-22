@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
-export function useTmdb<T>(url: string, params: Record<string, unknown>) {
+export function useTmdb<T>(url: string, params: Record<string, unknown>, _p0: (string | number)[]) {
   const [data, setData] = useState<T | null>(null);
 
   useEffect(() => {
