@@ -1,6 +1,7 @@
-import { Loading } from '@/components';
-import { IMAGE_BASE_URL, PERSON_ENDPOINT } from '@/core/constants';
+import { Loading } from '@/components/site/Loading';
+import { PERSON_ENDPOINT } from '@/core/constants';
 import type { PersonImagesResponse } from '@/core/types';
+import { getImageUrl } from '@/core/utils';
 import { useTmdb } from '@/hooks';
 import { useParams } from 'react-router-dom';
 
@@ -8,12 +9,8 @@ export const ImagesView = () => {
   const { id } = useParams();
   const { data, loading } = useTmdb<PersonImagesResponse>(`${PERSON_ENDPOINT}/${id}/images`, {}, [id]);
 
-  if (loading) {
-    return <Loading />;
-  }
-  if (!data) {
-    return null;
-  }
+  if (loading) return <Loading />;
+  if (!data) return null;
 
   return (
     <div className="space-y-4">
@@ -23,7 +20,7 @@ export const ImagesView = () => {
           {data.profiles.map((img, i) => (
             <div key={i} className="overflow-hidden rounded border border-zinc-800">
               <img
-                src={`${IMAGE_BASE_URL}${img.file_path}`}
+                src={getImageUrl(img.file_path)}
                 alt={`Photo ${i + 1}`}
                 className="h-48 w-full object-cover transition-transform duration-300 hover:scale-105"
               />

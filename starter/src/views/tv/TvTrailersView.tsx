@@ -1,4 +1,4 @@
-import { Loading } from '@/components';
+import { Loading } from '@/components/site/Loading';
 import { TV_ENDPOINT } from '@/core/constants';
 import type { TrailersResponse } from '@/core/types';
 import { useTmdb } from '@/hooks';
@@ -8,12 +8,8 @@ export const TvTrailersView = () => {
   const { id } = useParams();
   const { data, loading } = useTmdb<TrailersResponse>(`${TV_ENDPOINT}/${id}/videos`, {}, [id]);
 
-  if (loading) {
-    return <Loading />;
-  }
-  if (!data) {
-    return null;
-  }
+  if (loading) return <Loading />;
+  if (!data) return null;
 
   const trailers = data.results.filter((v) => v.site === 'YouTube' && v.type === 'Trailer');
   const others = data.results.filter((v) => v.site === 'YouTube' && v.type !== 'Trailer');

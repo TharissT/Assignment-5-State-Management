@@ -4,14 +4,13 @@ export const ErrorView = () => {
   const navigate = useNavigate();
 
   return (
-    <main className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center gap-6 text-center">
+    <main className="flex min-h-[calc(100vh-8rem)] flex-col items-center justify-center gap-6 text-center">
       <p className="text-8xl font-black text-red-600">404</p>
       <h1 className="text-2xl font-black tracking-widest text-white uppercase">Page Not Found</h1>
       <p className="text-zinc-500">This page does not exist or was removed.</p>
       <button
-        onClick={() => {
-          navigate('/');
-        }}
+        type="button"
+        onClick={() => navigate('/')}
         className="cursor-pointer bg-red-600 px-10 py-3 font-bold tracking-widest text-white uppercase transition-all duration-200 hover:bg-red-500"
       >
         Go Home

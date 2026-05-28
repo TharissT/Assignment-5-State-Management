@@ -1,4 +1,6 @@
+export * from '@/views/CartView';
 export * from '@/views/ErrorView';
+export * from '@/views/FavoritesView';
 export * from '@/views/GenreView';
 export * from '@/views/HomeView';
 export * from '@/views/movies/CreditsView';
@@ -10,6 +12,7 @@ export * from '@/views/person/CareerView';
 export * from '@/views/person/ImagesView';
 export * from '@/views/person/PersonView';
 export * from '@/views/SearchView';
+export * from '@/views/SettingsView';
 export * from '@/views/TrendingView';
 export * from '@/views/tv/EpisodeView';
 export * from '@/views/tv/SeasonsView';

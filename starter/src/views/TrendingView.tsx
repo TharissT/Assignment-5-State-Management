@@ -1,9 +1,12 @@
-import { ButtonGroup, ImageGrid, Loading, Pagination, SectionHeader } from '@/components';
+import { ButtonGroup } from '@/components/controls/buttons/ButtonGroup';
+import { ImageGrid } from '@/components/controls/images/ImageGrid';
+import { Pagination } from '@/components/controls/Pagination';
+import { Loading, SectionHeader } from '@/components/site/Loading';
 import { TRENDING_ENDPOINT } from '@/core/constants';
 import type { TrendingResponse } from '@/core/types';
+import { getImageUrl } from '@/core/utils';
 import { useTmdb } from '@/hooks';
 import { useState } from 'react';
-import { FiFilm, FiTv } from 'react-icons/fi';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 const MEDIA_TYPES = [
@@ -29,10 +32,12 @@ export const TrendingView = () => {
     page,
   ]);
 
-  const gridData = (data?.results ?? []).map((r) => ({
+  const images = (data?.results ?? []).map((r) => ({
     id: r.id,
-    imagePath: r.poster_path,
+    imageUrl: getImageUrl(r.poster_path),
     primaryText: r.title ?? r.name ?? r.original_title ?? '',
+    media: (r.media_type === 'tv' ? 'tv' : 'movie') as 'movie' | 'tv',
+    releaseDate: r.release_date ?? r.first_air_date,
   }));
 
   const handleMediaChange = (val: string) => {
@@ -49,9 +54,6 @@ export const TrendingView = () => {
     <section className="mx-auto max-w-7xl space-y-6 px-6 py-8">
       <SectionHeader title="Trending">
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 text-xs font-bold tracking-wider text-zinc-500 uppercase">
-            {mediaType === 'movie' ? <FiFilm size={13} /> : <FiTv size={13} />}
-          </div>
           <ButtonGroup value={mediaType} options={MEDIA_TYPES} onClick={handleMediaChange} />
           <ButtonGroup value={interval} options={INTERVALS} onClick={handleIntervalChange} />
         </div>
@@ -61,12 +63,12 @@ export const TrendingView = () => {
       ) : (
         <div className="space-y-6">
           <ImageGrid
-            results={gridData}
-            onClick={(id) => {
-              if (mediaType === 'tv') {
-                navigate(`/tv/${id}`);
+            images={images}
+            onClick={(img) => {
+              if (img.media === 'tv') {
+                navigate(`/tv-show/${img.id}`);
               } else {
-                navigate(`/movie/${id}`);
+                navigate(`/movie/${img.id}`);
               }
             }}
           />

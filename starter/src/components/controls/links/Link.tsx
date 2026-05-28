@@ -1,26 +1,20 @@
 import type { ReactNode } from 'react';
-import { NavLink, useMatch } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 type LinkProps = {
-  children: ReactNode;
   to: string;
-  match?: string;
+  children: ReactNode;
+  className?: string;
 };
 
-export const Link = ({ children, to, match }: LinkProps) => {
-  const matchResult = useMatch({ path: match || '' });
-  const isMatched = !!match && !!matchResult;
-
+export const Link = ({ to, children, className = '' }: LinkProps) => {
   return (
     <NavLink
-      replace
       to={to}
       className={({ isActive }) =>
-        `rounded-md border px-4 py-1 transition-all duration-200 ${
-          isActive || isMatched
-            ? 'scale-105 border-white bg-white text-gray-900 shadow-lg'
-            : 'border-gray-700 bg-gray-700 text-gray-300 hover:border-gray-500 hover:bg-gray-600 hover:text-white'
-        }`
+        `border-b-2 px-1 py-0.5 text-sm font-semibold transition-colors duration-200 ${
+          isActive ? 'border-red-600 text-white' : 'border-transparent text-zinc-400 hover:border-zinc-600 hover:text-white'
+        } ${className}`
       }
     >
       {children}

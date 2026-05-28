@@ -24,7 +24,8 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
 
-    /* Alias */
+    /* Alias Configuration */
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     }

@@ -1,6 +1,9 @@
-import { ImageGrid, Loading, Pagination, SectionHeader } from '@/components';
+import { ImageGrid } from '@/components/controls/images/ImageGrid';
+import { Pagination } from '@/components/controls/Pagination';
+import { Loading, SectionHeader } from '@/components/site/Loading';
 import { SEARCH_MOVIE_ENDPOINT, SEARCH_PERSON_ENDPOINT, SEARCH_TV_ENDPOINT } from '@/core/constants';
 import type { SearchResponse } from '@/core/types';
+import { getImageUrl } from '@/core/utils';
 import { useTmdb } from '@/hooks';
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -28,17 +31,18 @@ export const SearchView = () => {
     setPage(1);
   }, [query, filter]);
 
-  const gridData = (data?.results ?? []).map((r) => ({
+  const images = (data?.results ?? []).map((r) => ({
     id: r.id,
-    imagePath: r.poster_path ?? r.profile_path ?? null,
+    imageUrl: getImageUrl(r.poster_path ?? r.profile_path),
     primaryText: r.title ?? r.name ?? r.original_title ?? 'Unknown',
+    media: (filter === 'tv' ? 'tv' : 'movie') as 'movie' | 'tv',
   }));
 
   const handleClick = (id: number) => {
     if (filter === 'person') {
       navigate(`/person/${id}`);
     } else if (filter === 'tv') {
-      navigate(`/tv/${id}`);
+      navigate(`/tv-show/${id}`);
     } else {
       navigate(`/movie/${id}`);
     }
@@ -49,13 +53,14 @@ export const SearchView = () => {
       <SectionHeader title={query ? `Results for "${query}"` : 'Search'}>
         {data && <p className="text-xs font-bold tracking-wider text-zinc-600 uppercase">{data.total_results?.toLocaleString()} results</p>}
       </SectionHeader>
+
       {!query && <p className="py-10 text-center text-zinc-600">Start typing to search...</p>}
       {query && loading && <Loading />}
       {query && !loading && (
         <div className="space-y-6">
-          {gridData.length ? (
+          {images.length ? (
             <>
-              <ImageGrid results={gridData} onClick={handleClick} />
+              <ImageGrid images={images} onClick={(img) => handleClick(img.id)} />
               <Pagination page={page} maxPages={data?.total_pages ?? 1} onClick={setPage} />
             </>
           ) : (

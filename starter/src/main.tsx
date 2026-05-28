@@ -1,5 +1,5 @@
-import { App } from '@/App.tsx';
-import { UserProvider } from '@/context';
+import { App } from '@/App';
+import { UserProvider } from '@/context/UserProvider';
 import '@/index.css';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';

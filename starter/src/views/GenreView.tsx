@@ -1,6 +1,10 @@
-import { ButtonGroup, ImageGrid, Loading, Pagination, SectionHeader } from '@/components';
+import { ButtonGroup } from '@/components/controls/buttons/ButtonGroup';
+import { ImageGrid } from '@/components/controls/images/ImageGrid';
+import { Pagination } from '@/components/controls/Pagination';
+import { Loading, SectionHeader } from '@/components/site/Loading';
 import { DISCOVER_MOVIE_ENDPOINT, DISCOVER_TV_ENDPOINT, MOVIE_GENRES, TV_GENRES } from '@/core/constants';
 import type { MoviesResponse } from '@/core/types';
+import { calculatePrice, getImageUrl } from '@/core/utils';
 import { useTmdb } from '@/hooks';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -12,31 +16,40 @@ const MEDIA_TYPES = [
 
 export const GenreView = () => {
   const navigate = useNavigate();
-  const { mediaType: paramMedia, genre: paramGenreName } = useParams<{ mediaType?: string; genre?: string }>();
+  const { mediaType: paramMedia, genre: paramGenreName } = useParams<{
+    mediaType?: string;
+    genre?: string;
+  }>();
   const mediaType = (paramMedia === 'tv' ? 'tv' : 'movie') as 'movie' | 'tv';
   const genres = mediaType === 'movie' ? MOVIE_GENRES : TV_GENRES;
-  const currentGenre = genres.find((g) => g.label.toLowerCase() === paramGenreName?.toLowerCase()) || genres[0];
-  const selectedGenreId = currentGenre.value;
+  const currentGenre = genres.find((g) => g.label.toLowerCase() === paramGenreName?.toLowerCase()) ?? genres[0];
   const [page, setPage] = useState(1);
+
   const endpoint = mediaType === 'movie' ? DISCOVER_MOVIE_ENDPOINT : DISCOVER_TV_ENDPOINT;
-  const { data, loading } = useTmdb<MoviesResponse>(endpoint, { with_genres: selectedGenreId, page }, [selectedGenreId, page, mediaType]);
-  const gridData = (data?.results ?? []).map((r) => ({
+  const { data, loading } = useTmdb<MoviesResponse>(endpoint, { with_genres: currentGenre.value, page }, [
+    currentGenre.value,
+    page,
+    mediaType,
+  ]);
+
+  const images = (data?.results ?? []).map((r) => ({
     id: r.id,
-    imagePath: r.poster_path,
+    imageUrl: getImageUrl(r.poster_path),
     primaryText: r.original_title ?? r.name ?? r.title ?? '',
+    secondaryText: `$${calculatePrice(r.release_date ?? r.first_air_date).toFixed(2)}`,
+    media: mediaType,
+    releaseDate: r.release_date ?? r.first_air_date,
   }));
 
   const handleMediaChange = (val: string) => {
     const newGenres = val === 'movie' ? MOVIE_GENRES : TV_GENRES;
-    const firstName = newGenres[0].label.toLowerCase();
-    navigate(`/genre/${val}/${firstName}`);
+    navigate(`/genre/${val}/${newGenres[0].label.toLowerCase()}`);
     setPage(1);
   };
 
   const handleGenreChange = (val: string) => {
     const genreObj = genres.find((g) => g.value === val);
-    const name = genreObj ? genreObj.label.toLowerCase() : 'action';
-    navigate(`/genre/${mediaType}/${name}`);
+    navigate(`/genre/${mediaType}/${genreObj?.label.toLowerCase() ?? 'action'}`);
     setPage(1);
   };
 
@@ -45,15 +58,15 @@ export const GenreView = () => {
       <SectionHeader title={currentGenre.label}>
         <ButtonGroup value={mediaType} options={MEDIA_TYPES} onClick={handleMediaChange} />
       </SectionHeader>
+
       <div className="flex flex-wrap gap-2">
         {genres.map((g) => (
           <button
             key={g.value}
-            onClick={() => {
-              handleGenreChange(g.value);
-            }}
+            type="button"
+            onClick={() => handleGenreChange(g.value)}
             className={`cursor-pointer rounded-full border px-4 py-1.5 text-xs font-bold tracking-wider uppercase transition-all duration-200 ${
-              selectedGenreId === g.value
+              currentGenre.value === g.value
                 ? 'border-red-600 bg-red-600 text-white'
                 : 'border-zinc-700 bg-transparent text-zinc-400 hover:border-red-600 hover:text-red-400'
             }`}
@@ -62,17 +75,18 @@ export const GenreView = () => {
           </button>
         ))}
       </div>
+
       {loading ? (
         <Loading />
       ) : (
         <div className="space-y-6">
           <ImageGrid
-            results={gridData}
-            onClick={(id) => {
+            images={images}
+            onClick={(img) => {
               if (mediaType === 'tv') {
-                navigate(`/tv/${id}`);
+                navigate(`/tv-show/${img.id}`);
               } else {
-                navigate(`/movie/${id}`);
+                navigate(`/movie/${img.id}`);
               }
             }}
           />

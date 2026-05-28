@@ -1,3 +1,3 @@
-export * from '@/core/constants/images';
-export * from '@/core/types/components';
-export * from '@/core/utils/images';
+export * from '@/core/constants';
+export * from '@/core/types';
+export * from '@/core/utils';

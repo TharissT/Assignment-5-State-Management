@@ -1,6 +1,8 @@
-import { LinkGroup, Loading } from '@/components';
-import { IMAGE_BASE_URL, PERSON_ENDPOINT } from '@/core/constants';
+import { LinkGroup } from '@/components/controls/links/LinkGroup';
+import { Loading } from '@/components/site/Loading';
+import { PERSON_ENDPOINT } from '@/core/constants';
 import type { PersonResponse } from '@/core/types';
+import { getImageUrl } from '@/core/utils';
 import { useTmdb } from '@/hooks';
 import { FiChevronLeft, FiMapPin } from 'react-icons/fi';
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
@@ -18,28 +20,21 @@ export const PersonView = () => {
     );
   }
 
-  if (!data) {
-    return null;
-  }
+  if (!data) return null;
 
   return (
     <div className="mx-auto max-w-7xl space-y-6 px-6 py-8">
       <button
-        onClick={() => {
-          navigate(-1);
-        }}
+        type="button"
+        onClick={() => navigate(-1)}
         className="flex cursor-pointer items-center gap-1 text-sm font-bold tracking-wider text-zinc-500 uppercase transition-colors hover:text-white"
       >
-        <FiChevronLeft size={16} />
-        Back
+        <FiChevronLeft size={16} /> Back
       </button>
+
       <div className="flex items-start gap-8">
         {data.profile_path ? (
-          <img
-            src={`${IMAGE_BASE_URL}${data.profile_path}`}
-            alt={data.name}
-            className="w-48 shrink-0 rounded border border-zinc-800 shadow-2xl"
-          />
+          <img src={getImageUrl(data.profile_path)} alt={data.name} className="w-48 shrink-0 rounded border border-zinc-800 shadow-2xl" />
         ) : (
           <div className="flex h-64 w-48 shrink-0 items-center justify-center rounded border border-zinc-800 bg-zinc-900">
             <span className="text-4xl text-zinc-600">?</span>
@@ -57,14 +52,14 @@ export const PersonView = () => {
             {data.deathday && <span className="text-zinc-600">Died: {data.deathday}</span>}
             {data.place_of_birth && (
               <span className="flex items-center gap-1">
-                <FiMapPin size={13} />
-                {data.place_of_birth}
+                <FiMapPin size={13} /> {data.place_of_birth}
               </span>
             )}
           </div>
           {data.biography && <p className="line-clamp-4 max-w-2xl text-sm leading-relaxed text-zinc-400">{data.biography}</p>}
         </div>
       </div>
+
       <LinkGroup
         links={[
           { label: 'Career', to: `/person/${id}/career` },
