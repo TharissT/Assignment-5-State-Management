@@ -5,7 +5,7 @@ import { SEARCH_MOVIE_ENDPOINT, SEARCH_PERSON_ENDPOINT, SEARCH_TV_ENDPOINT } fro
 import type { SearchResponse } from '@/core/types';
 import { getImageUrl } from '@/core/utils';
 import { useTmdb } from '@/hooks';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 export const SearchView = () => {
@@ -26,10 +26,6 @@ export const SearchView = () => {
     filter,
     page,
   ]);
-
-  useEffect(() => {
-    setPage(1);
-  }, [query, filter]);
 
   const images = (data?.results ?? []).map((r) => ({
     id: r.id,
