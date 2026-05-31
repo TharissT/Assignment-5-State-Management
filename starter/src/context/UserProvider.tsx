@@ -32,46 +32,53 @@ const defaultSettings: UserSettings = {
 
 export const UserProvider = ({ children }: UserProviderProps) => {
   const [settings, setSettings] = useState<UserSettings>(() => loadFromStorage<UserSettings>('tmdb_settings', defaultSettings));
-
   const [favorites, setFavorites] = useState<FavoriteItem[]>(() => loadFromStorage<FavoriteItem[]>('tmdb_favorites', []));
-
   const [cart, setCart] = useState<CartItem[]>(() => loadFromStorage<CartItem[]>('tmdb_cart', []));
 
   const updateUsername = (name: string) => {
-    const updated = { ...settings, username: name };
-    setSettings(updated);
-    saveToStorage('tmdb_settings', updated);
+    setSettings((prev) => {
+      const updated = { ...prev, username: name };
+      saveToStorage('tmdb_settings', updated);
+      return updated;
+    });
   };
 
   const updateMovieGenres = (genres: string[]) => {
-    const updated = { ...settings, movieGenres: genres };
-    setSettings(updated);
-    saveToStorage('tmdb_settings', updated);
+    setSettings((prev) => {
+      const updated = { ...prev, movieGenres: genres };
+      saveToStorage('tmdb_settings', updated);
+      return updated;
+    });
   };
 
   const updateTvGenres = (genres: string[]) => {
-    const updated = { ...settings, tvGenres: genres };
-    setSettings(updated);
-    saveToStorage('tmdb_settings', updated);
+    setSettings((prev) => {
+      const updated = { ...prev, tvGenres: genres };
+      saveToStorage('tmdb_settings', updated);
+      return updated;
+    });
   };
 
   const addFavorite = (item: FavoriteItem) => {
-    // remove from cart if present (mutually exclusive)
     const newCart = cart.filter((c) => c.id !== item.id);
     setCart(newCart);
     saveToStorage('tmdb_cart', newCart);
 
     if (!favorites.find((f) => f.id === item.id)) {
-      const newFavs = [...favorites, item];
-      setFavorites(newFavs);
-      saveToStorage('tmdb_favorites', newFavs);
+      setFavorites((prevFavs) => {
+        const newFavs = [...prevFavs, item];
+        saveToStorage('tmdb_favorites', newFavs);
+        return newFavs;
+      });
     }
   };
 
   const removeFavorite = (id: number) => {
-    const newFavs = favorites.filter((f) => f.id !== id);
-    setFavorites(newFavs);
-    saveToStorage('tmdb_favorites', newFavs);
+    setFavorites((prevFavs) => {
+      const newFavs = prevFavs.filter((f) => f.id !== id);
+      saveToStorage('tmdb_favorites', newFavs);
+      return newFavs;
+    });
   };
 
   const isFavorite = (id: number): boolean => {
@@ -84,22 +91,27 @@ export const UserProvider = ({ children }: UserProviderProps) => {
   };
 
   const addToCart = (item: CartItem) => {
-    // remove from favorites if present (mutually exclusive)
-    const newFavs = favorites.filter((f) => f.id !== item.id);
-    setFavorites(newFavs);
-    saveToStorage('tmdb_favorites', newFavs);
+    setFavorites((prevFavs) => {
+      const newFavs = prevFavs.filter((f) => f.id !== item.id);
+      saveToStorage('tmdb_favorites', newFavs);
+      return newFavs;
+    });
 
     if (!cart.find((c) => c.id === item.id)) {
-      const newCart = [...cart, item];
-      setCart(newCart);
-      saveToStorage('tmdb_cart', newCart);
+      setCart((prevCart) => {
+        const newCart = [...prevCart, item];
+        saveToStorage('tmdb_cart', newCart);
+        return newCart;
+      });
     }
   };
 
   const removeFromCart = (id: number) => {
-    const newCart = cart.filter((c) => c.id !== id);
-    setCart(newCart);
-    saveToStorage('tmdb_cart', newCart);
+    setCart((prevCart) => {
+      const newCart = prevCart.filter((c) => c.id !== id);
+      saveToStorage('tmdb_cart', newCart);
+      return newCart;
+    });
   };
 
   const isInCart = (id: number): boolean => {
