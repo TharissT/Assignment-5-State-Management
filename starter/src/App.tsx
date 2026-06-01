@@ -31,7 +31,6 @@ export const App = () => {
     <Routes>
       <Route path="/" element={<HomeView />} />
       <Route element={<MainLayout />}>
-        {/* Movies */}
         <Route path="/movies" element={<Navigate to="/movies/now_playing" replace />} />
         <Route path="/movies/:category" element={<MoviesView />} />
         <Route path="/movie/:id" element={<MovieView />}>
@@ -41,7 +40,6 @@ export const App = () => {
           <Route path="reviews" element={<ReviewsView />} />
         </Route>
 
-        {/* TV */}
         <Route path="/tv" element={<Navigate to="/tv/airing_today" replace />} />
         <Route path="/tv/:category" element={<TelevisionView />} />
         <Route path="/tv-show/:id" element={<TvView />}>
@@ -53,25 +51,20 @@ export const App = () => {
         </Route>
         <Route path="/tv-show/:id/seasons/:seasonNumber" element={<EpisodeView />} />
 
-        {/* Person */}
         <Route path="/person/:id" element={<PersonView />}>
           <Route index element={<Navigate to="career" replace />} />
           <Route path="career" element={<CareerView />} />
           <Route path="images" element={<ImagesView />} />
         </Route>
 
-        {/* Trending */}
         <Route path="/trending" element={<Navigate to="/trending/movie?interval=day" replace />} />
         <Route path="/trending/:mediaType" element={<TrendingView />} />
 
-        {/* Genre */}
         <Route path="/genre" element={<Navigate to="/genre/movie/action" replace />} />
         <Route path="/genre/:mediaType/:genre" element={<GenreView />} />
 
-        {/* Search */}
         <Route path="/search" element={<SearchView />} />
 
-        {/* User pages */}
         <Route path="/favorites" element={<FavoritesView />} />
         <Route path="/cart" element={<CartView />} />
         <Route path="/settings" element={<SettingsView />} />
